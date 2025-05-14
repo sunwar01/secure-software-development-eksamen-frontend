@@ -16,6 +16,7 @@
             "outputPath": "dist/secure-software-development-eksamen-frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "aot": true,
             "polyfills": [
               "zone.js"
             ],
@@ -27,6 +28,7 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -85,6 +87,7 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -92,5 +95,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "1eef9c3b-3481-4a57-aba7-d5f258f4f0a2"
   }
 }

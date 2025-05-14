@@ -1,0 +1,12 @@
+
+
+AOT er slået til i angular.json dette reducere runtime vulnerabiliteter (https://angular.dev/best-practices/security) 14-05
+
+Login component som gør brug af angular reactive forms og validator, samt data binding, som gør det sværer at lave XSS and injections. 14-05
+
+CSP Content Security Policy i index.html som gør det sværer at lave XSS and data injections (https://angular.dev/best-practices/security) (https://web.dev/articles/csp) 14-05
+
+
+
+
+
