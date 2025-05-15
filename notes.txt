@@ -6,7 +6,7 @@ Login component som gør brug af angular reactive forms og validator, samt data 
 
 CSP Content Security Policy i index.html som gør det sværer at lave XSS and data injections (https://angular.dev/best-practices/security) (https://web.dev/articles/csp) 14-05
 
-
+Vi har sat test environment og production environment op, så vi kan holde styr på logs og fejl i de forskellige miljøer. 15-05
 
 
 

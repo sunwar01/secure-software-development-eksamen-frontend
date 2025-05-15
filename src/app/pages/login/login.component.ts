@@ -5,6 +5,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {environment} from '../../../environment/environment';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     MatCardModule
   ],
   templateUrl: './login.component.html',
+  standalone: true,
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
@@ -33,9 +35,15 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    if (this.loginForm.valid)
-      console.log('Form submitted:', this.loginForm.value);
-    else
-      console.log('Form is invalid');
+    if (this.loginForm.valid) {
+      if (!environment.production) {
+        console.log('Form submitted:', this.loginForm.value);
+      }
+
+    } else {
+      if (!environment.production) {
+        console.log('Form is invalid');
+      }
+    }
   }
 }

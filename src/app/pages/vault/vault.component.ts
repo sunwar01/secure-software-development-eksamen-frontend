@@ -14,6 +14,7 @@ import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/mat
     ReactiveFormsModule
   ],
   templateUrl: './vault.component.html',
+  standalone: true,
   styleUrl: './vault.component.css'
 })
 export class VaultComponent {
