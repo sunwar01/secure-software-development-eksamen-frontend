@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {NgIf} from '@angular/common';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
@@ -9,56 +10,61 @@ import {AuthService} from '../../services/api/auth.service';
 import {Router} from '@angular/router';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-register',
   imports: [
     ReactiveFormsModule,
+    NgIf,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatCardModule
   ],
-  templateUrl: './login.component.html',
-  standalone: true,
-  styleUrl: './login.component.css'
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.css'
 })
-export class LoginComponent {
+export class RegisterComponent {
 
-  loginForm: FormGroup;
+  registerForm: FormGroup;
+
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
-    this.loginForm = this.fb.group({
-      username: ['', [Validators.required, Validators.maxLength(20), ]],
-      password: ['', [Validators.required,  Validators.maxLength(50), ]]
+    this.registerForm = this.fb.group({
+      username: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20), Validators.pattern('^[a-zA-Z0-9_-]+$')]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(50), Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*?_])[A-Za-z\\d!@#$%^&*?_]+$')]]
+
+
     });
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
+    if (this.registerForm.valid) {
       if (!environment.production) {
-        console.log('Form submitted:', { username: this.loginForm.value.username });
+        console.log('Form submitted:', { username: this.registerForm.value.username });
       }
-      this.authService.login(this.loginForm.value).subscribe({
+      this.authService.register(this.registerForm.value).subscribe({
         next: (response: any) => {
           if (!environment.production) {
-            console.log('Login successful:', response);
+            console.log('Register successful:', response);
           }
+          this.router.navigate(['/login']);
+
         },
         error: (error: any) => {
           if (!environment.production) {
-            console.error('Login failed:', error);
+            console.error('Register failed:', error);
           }
+
         },
         complete: () => {
           if (!environment.production) {
-            console.log('Login request completed');
+            console.log('Register request completed');
           }
-          this.router.navigate(['/vault']);
         }
       });
     } else {
       if (!environment.production) {
         console.log('Form is invalid');
-        }
       }
     }
   }
+}

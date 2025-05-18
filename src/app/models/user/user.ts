@@ -1,6 +1,10 @@
+import {vaultEntry} from '../vaultEntry/vaultEntry';
 
 export interface user {
   id: number;
   username: string;
-  password: string;
+  passwordHash: string;
+  encryptedKey: string;
+  refreshToken: string;
+  vaultEntries: vaultEntry[];
 }

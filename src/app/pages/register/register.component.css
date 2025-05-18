@@ -15,6 +15,18 @@ mat-card {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+mat-form-field {
+  width: 100%;
+}
 
 button {
   align-self: flex-end;
