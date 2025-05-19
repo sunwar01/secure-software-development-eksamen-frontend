@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environment/environment';
-import {catchError, Observable, switchMap, tap, throwError} from 'rxjs';
+import {catchError, Observable, tap, throwError} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +10,11 @@ export class AuthService {
 
   private apiUrl = environment.apiUrl;
   private accessToken: string | null = null;
+  private readonly TOKEN_KEY = 'access_token';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.accessToken = localStorage.getItem(this.TOKEN_KEY);
+  }
 
 
   register(credentials: { username: string; password: string }): Observable<any> {
@@ -23,15 +26,27 @@ export class AuthService {
       .pipe(
         tap(response => {
           this.accessToken = response.accessToken;
+          localStorage.setItem(this.TOKEN_KEY, response.accessToken);
         })
       );
   }
 
   refresh(): Observable<{ accessToken: string }> {
-    return this.http.post<{ accessToken: string }>(`${this.apiUrl}/api/auth/refresh`, {}, { withCredentials: true })
+    return this.http
+      .post<{ accessToken: string }>(`${this.apiUrl}/api/auth/refresh`, {}, { withCredentials: true })
       .pipe(
         tap(response => {
           this.accessToken = response.accessToken;
+          localStorage.setItem(this.TOKEN_KEY, response.accessToken);
+          if (!environment.production) {
+            console.log('Token refreshed, accessToken saved:', response.accessToken);
+          }
+        }),
+        catchError(error => {
+          if (!environment.production) {
+            console.error('Refresh token failed:', error);
+          }
+          return throwError(() => error);
         })
       );
   }
@@ -43,6 +58,7 @@ export class AuthService {
     }).pipe(
       tap(() => {
         this.accessToken = null;
+        localStorage.removeItem(this.TOKEN_KEY);
       })
     );
   }
@@ -51,18 +67,7 @@ export class AuthService {
     return this.accessToken;
   }
 
-  handleUnauthorized(request: Observable<any>): Observable<any> {
-    return request.pipe(
-      catchError(error => {
-        if (error instanceof HttpErrorResponse && error.status === 401) {
-          return this.refresh().pipe(
-            switchMap(() => request)
-          );
-        }
-        return throwError(() => error);
-      })
-    );
-  }
+
 
 
 }

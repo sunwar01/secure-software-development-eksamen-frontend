@@ -1,14 +1,67 @@
 <mat-card>
   <mat-card-header>
     <mat-card-title>Vault</mat-card-title>
-
   </mat-card-header>
   <mat-card-content>
+    <!-- Create Form -->
+    <form [formGroup]="createVaultEntryForm" (ngSubmit)="createVaultEntry()">
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" required />
+        <mat-error *ngIf="createVaultEntryForm.get('name')?.hasError('required')">
+          Name is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username" required />
+        <mat-error *ngIf="createVaultEntryForm.get('username')?.hasError('required')">
+          Username is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" required />
+        <mat-error *ngIf="createVaultEntryForm.get('password')?.hasError('required')">
+          Password is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>URL</mat-label>
+        <input matInput formControlName="url" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Notes</mat-label>
+        <input matInput formControlName="notes" />
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit" [disabled]="createVaultEntryForm.invalid">
+        Add Entry
+      </button>
+    </form>
 
+    <!-- Vault Entries List -->
+    <mat-list>
+      <mat-list-item *ngFor="let entry of vaultEntries" (contextmenu)="openContextMenu($event, entry)">
+        <span>{{ entry.name }} - {{ entry.username }}</span>
+        <button mat-icon-button color="primary"  title="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn"  title="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-list-item>
+      <mat-list-item *ngIf="vaultEntries.length === 0">
+        No vault entries found.
+      </mat-list-item>
+    </mat-list>
 
+    <!-- Context Menu -->
+    <mat-menu #entryMenu="matMenu">
+      <button mat-menu-item >Edit</button>
+      <button mat-menu-item >Delete</button>
+    </mat-menu>
+    <div [matMenuTriggerFor]="selectedEntry ? entryMenu : null"></div>
 
-
-    <button mat-raised-button color="primary" (click)="logout()" type="submit">Logout</button>
+    <button mat-raised-button color="primary" (click)="logout()">Logout</button>
   </mat-card-content>
-
 </mat-card>
