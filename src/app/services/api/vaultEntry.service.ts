@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environment/environment';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {catchError, Observable,  throwError} from 'rxjs';
-import {AuthService} from './auth.service';
-import {vaultEntry} from '../../models/vaultEntry/vaultEntry';
 import {vaultEntryCreate} from '../../models/vaultEntry/dto/vaultEntryCreate';
+import {vaultEntryGet} from '../../models/vaultEntry/dto/vaultEntryGet';
 
 
 @Injectable ({
@@ -16,30 +15,24 @@ export class VaultEntryService {
   private apiUrl = environment.apiUrl;
 
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient) {}
 
-  getVaultEntries(): Observable<vaultEntry[]> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.authService.getAccessToken()}`,
-    });
-
-    return this.http.get<vaultEntry[]>(
+  getVaultEntries(): Observable<vaultEntryGet[]> {
+    return this.http.get<vaultEntryGet[]>(
       `${this.apiUrl}/api/vault/getVaultEntries`,
-      {
-        headers,
-        withCredentials: true,
-      }
+      { withCredentials: true }
+    ).pipe(
+      catchError(error => {
+        console.error('Error fetching vault entries:', error);
+        return throwError(() => new Error('Failed to load vault entries'));
+      })
     );
   }
 
   deleteVaultEntry(id: string): Observable<void> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.authService.getAccessToken()}`,
-    });
-
     return this.http.delete<void>(
-      `${this.apiUrl}/api/vault/${id}`,
-      { headers, withCredentials: true }
+      `${this.apiUrl}/api/vault/deleteVaultEntry${id}`,
+      { withCredentials: true }
     ).pipe(
       catchError(error => {
         console.error('Error deleting vault entry:', error);
@@ -48,16 +41,11 @@ export class VaultEntryService {
     );
   }
 
-
   createVaultEntry(entry: vaultEntryCreate): Observable<vaultEntryCreate> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.authService.getAccessToken()}`,
-    });
-
     return this.http.post<vaultEntryCreate>(
       `${this.apiUrl}/api/vault/createVaultEntry`,
       entry,
-      { headers, withCredentials: true }
+      { withCredentials: true }
     ).pipe(
       catchError(error => {
         console.error('Error creating vault entry:', error);
@@ -65,27 +53,4 @@ export class VaultEntryService {
       })
     );
   }
-
-  updateVaultEntry(entry: vaultEntry): Observable<vaultEntry> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.authService.getAccessToken()}`,
-    });
-
-    return this.http.put<vaultEntry>(
-      `${this.apiUrl}/api/vault/update/${entry.id}`,
-      entry,
-      { headers, withCredentials: true }
-    ).pipe(
-      catchError(error => {
-        console.error('Error updating vault entry:', error);
-        return throwError(() => new Error('Failed to update vault entry'));
-      })
-    );
-  }
-
-
-
-
-
-
 }

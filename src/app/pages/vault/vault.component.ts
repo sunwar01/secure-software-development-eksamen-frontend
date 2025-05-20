@@ -6,13 +6,12 @@ import {Router} from '@angular/router';
 import {AuthService} from '../../services/api/auth.service';
 import {environment} from '../../../environment/environment';
 import {VaultEntryService} from '../../services/api/vaultEntry.service';
-import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatList, MatListItem} from '@angular/material/list';
 import {NgForOf, NgIf} from '@angular/common';
 import {MatIcon} from '@angular/material/icon';
 import {vaultEntryCreate} from '../../models/vaultEntry/dto/vaultEntryCreate';
-import {vaultEntry} from '../../models/vaultEntry/vaultEntry';
 import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/input';
+import {vaultEntryGet} from '../../models/vaultEntry/dto/vaultEntryGet';
 
 
 
@@ -26,9 +25,6 @@ import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/inpu
     MatCardTitle,
     ReactiveFormsModule,
     MatButton,
-    MatMenu,
-    MatMenuTrigger,
-    MatMenuItem,
     MatIcon,
     MatListItem,
     NgIf,
@@ -46,8 +42,8 @@ import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/inpu
 })
 export class VaultComponent implements OnInit {
 
-  vaultEntries: vaultEntry[] = [];
-  selectedEntry: vaultEntry | null = null;
+  vaultEntries: vaultEntryGet[] = [];
+  selectedEntry: vaultEntryGet | null = null;
   createVaultEntryForm: FormGroup;
 
 
@@ -115,7 +111,7 @@ export class VaultComponent implements OnInit {
 
   ngOnInit(): void {
     this.vaultEntryService.getVaultEntries().subscribe({
-      next: (entries: vaultEntry[]) => {
+      next: (entries: vaultEntryGet[]) => {
         if (!environment.production) {
           console.log('Vault entries fetched successfully:', entries);
         }
@@ -133,17 +129,30 @@ export class VaultComponent implements OnInit {
       },
     });
   }
-  openContextMenu(event: MouseEvent, entry: vaultEntry): void {
+  openContextMenu(event: MouseEvent, entry: vaultEntryGet): void {
     event.preventDefault();
     this.selectedEntry = entry;
   }
 
 
-  editEntry(vaultEntry: vaultEntryCreate) {
+  deleteEntry(vaultEntry: vaultEntryGet) {
+    this.vaultEntryService.deleteVaultEntry(vaultEntry.id).subscribe({
+      next: () => {
+        if (!environment.production) {
+          console.log('Vault entry deleted successfully:', vaultEntry.id);
+        }
 
-  }
-
-  deleteEntry(vaultEntry: vaultEntryCreate) {
-
+      },
+      error: (error: Error) => {
+        if (!environment.production) {
+          console.error('Error deleting vault entry:', error);
+        }
+      },
+      complete: () => {
+        if (!environment.production) {
+          console.log('Vault entry delete request completed');
+        }
+      },
+    });
   }
 }

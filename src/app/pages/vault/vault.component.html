@@ -42,11 +42,8 @@
     <!-- Vault Entries List -->
     <mat-list>
       <mat-list-item *ngFor="let entry of vaultEntries" (contextmenu)="openContextMenu($event, entry)">
-        <span>{{ entry.name }} - {{ entry.username }}</span>
-        <button mat-icon-button color="primary"  title="Edit">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn"  title="Delete">
+        <span>{{ entry.name }} - {{ entry.username }} - {{ entry.decryptedPassword }} - {{entry.url}} - {{entry.notes}}  </span>
+        <button mat-icon-button color="warn" (click)="deleteEntry(entry)" title="Delete">
           <mat-icon>delete</mat-icon>
         </button>
       </mat-list-item>
@@ -54,14 +51,6 @@
         No vault entries found.
       </mat-list-item>
     </mat-list>
-
-    <!-- Context Menu -->
-    <mat-menu #entryMenu="matMenu">
-      <button mat-menu-item >Edit</button>
-      <button mat-menu-item >Delete</button>
-    </mat-menu>
-    <div [matMenuTriggerFor]="selectedEntry ? entryMenu : null"></div>
-
     <button mat-raised-button color="primary" (click)="logout()">Logout</button>
   </mat-card-content>
 </mat-card>
